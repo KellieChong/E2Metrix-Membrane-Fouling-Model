@@ -17,8 +17,8 @@
 <b>
 <p>A second functionality of this model is to predict other parameters such as the cake resistance, cake thickness, and cake particle size based off other intrinsic membrane and fluid dynamics properties of the system. Once the constant Kc of the most optimal fouling mechanism is calculated by the previous section, it can then be used for determining these other attributes of our foulant. </p>
 
-
 <h2> Technologies <h2>
 <br>
+  
 <p>Jupyter notebook was used for the model and ease of access.</p>
 <p>Two VBA scripts are provided for processing the raw data from LABVIEW of bench MF/UF experiments, and processing the data from CIAL results for electrocoagulated samples.</p>
