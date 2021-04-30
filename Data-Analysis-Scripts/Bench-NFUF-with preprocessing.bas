@@ -1,4 +1,4 @@
-Attribute VB_Name = "Module11"
+Attribute VB_Name = "Module1"
  
 Sub Main()
 
@@ -12,113 +12,66 @@ saveAs
 End Sub
 Sub preprocessData()
 
-' A small note: we may have to run this section twice to eliminate points where there are > 2 consecutive points of outlier fluxes
-
-    ' Let's normalize the flux first
-    Dim lastRow As Long
-    Dim normPressure As Variant
-    Dim normViscosity As Long
-    
-    lastRow = Cells.Find(What:="*", _
-                    After:=Range("A1"), _
-                    LookAt:=xlPart, _
-                    LookIn:=xlFormulas, _
-                    SearchOrder:=xlByRows, _
-                    SearchDirection:=xlPrevious, _
-                    MatchCase:=False).Row
-                    
-    'Get the normal pressure from the user and store it in a variable
-    normPressure = InputBox("Please enter the experiment's normal pressure in psi: ")
-    
-    'Calculate the viscosity at 22 degrees and store it in a column
-    Range("Q1") = "Calculation Intermediate"
-    Range("Q2").Formula = "=EXP((-52.843)+(3703.6/(273.15+RC[-13])+5.866*LN(273.15+RC[-13])-(5.879*10^(-29))*(273.15+RC[-13])^10))"
-    Range("Q2").Select
-    Selection.AutoFill Destination:=Range(Cells(2, 17), Cells(lastRow, 17)), Type:=xlFillDefault
-    'Round(Exp((-52.843) + (3703.6 / 295.15) + 5.866 * 5.68748370169 - (5.879 * 10 ^ (-29)) * 295.15 ^ 10), 7)
-    'Debug.Print normViscosity
-    Range("N1") = "Normalized Flux"
-    Range("N2").Formula = "= K2 * Q2 / 0.000975735*" & normPressure & "/((E2+F2)/2)" 'Normalized Flux
-    Range("N2").AutoFill Destination:=Range(Cells(2, 14), Cells(lastRow, 14)), Type:=xlFillDefault
-    
-' ---------------------------------------------------------------------------------------------------------------
     'This section will delete rows where the flux is =< 15
-    
     Dim j As Long
     j = 2
     
     Do While j <= ThisWorkbook.ActiveSheet.Range("K1").CurrentRegion.Rows.Count
 
-        If Cells([j], [14]) <= 15 Then
-            ThisWorkbook.ActiveSheet.Cells(j, 14).EntireRow.Delete
+        If Cells([j], [11]) <= 15 Then
+            ThisWorkbook.ActiveSheet.Cells(j, 11).EntireRow.Delete
         Else
             j = j + 1
         End If
 
     Loop
-    
-' -----------------------------------------------------------------------------------------------------------------
-    
+
     'Now we will delete the rows where the flux sporadically increased outside the backflush period
-    
     Dim backflushFreq As Variant
     backflushFreq = InputBox("Please enter the backflush frequency in minutes below: ")
     
     'we will delete rows where the permeate flux deviates > 10% from the previous timepoint's flux on the interval of
     '[0.1, backflushx] where x is the backflush number
     ' first we must convert the time in minutes to hours
-    
     Dim min2hr  As Variant
     Dim totaltime As Integer
     Dim x As Integer
+    Dim lastRow As Long
     Dim k As Long
-    'Dim del As Integer
-    Dim rows2del As Object
-    
-    Set rows2del = CreateObject("System.Collections.ArrayList")
-    'Dim n As Long
+    Dim del As Integer
     
     del = 0
-    min2hr = backflushFreq / 60
-    totaltime = Round(((Cells([lastRow], [3]) / min2hr)), 1)
-    
-    'Uncomment for debugging purposes
-    'Debug.Print lastRow
-    'Debug.Print Round((Cells([lastRow], [3]).Value / min2hr))
-    
-    For x = 1 To totaltime 'Number of times backflush is occuring
-        Debug.Print x
-        For k = (37 + (x - 1) * backflushFreq * 6) To ((6 * backflushFreq * x) - 1)
-            'Debug.Print k
-            'If (Abs(Cells(k, 11).Value - Cells(k - 1, 11).Value) / Cells(k - 1, 11).Value) = 1 Then
-            If k > ThisWorkbook.ActiveSheet.Range("K1").CurrentRegion.Rows.Count Then
-                Exit For
-            ElseIf (Abs(Cells(k, 14).Value - Cells(k - 1, 14).Value) / Cells(k - 1, 14).Value) > 0.115 Then
-                'Debug.Print ("Deleted row " & k & " % Difference: " & Abs(Cells(k, 11).Value - Cells(k - 1, 11).Value) / Cells(k - 1, 11).Value)
-                'ThisWorkbook.ActiveSheet.Cells(k, 11).EntireRow.Delete
-                'del = del + 1
-                ' Add the row index to our list to be deleted after reversing the order of the list
-                rows2del.Add k
-            End If
-        Next k
-    Next x
+    If VarType(backflushFreq) = 2 Then
+        min2hr = backflushFreq / 60
+        lastRow = Cells.Find(What:="*", _
+                        After:=Range("A1"), _
+                        LookAt:=xlPart, _
+                        LookIn:=xlFormulas, _
+                        SearchOrder:=xlByRows, _
+                        SearchDirection:=xlPrevious, _
+                        MatchCase:=False).Row
+        totaltime = Round(((Cells([lastRow], [3]) / min2hr)), 1)
         
-    rows2del.Reverse
-    
-    For Each Item In rows2del
-    
-        'Print the row number and difference for debugging reasons
-        Debug.Print ("Deleted row " & Item & _
-        " % Difference: " & Abs(Cells(Item, 14).Value - Cells(Item - 1, 14).Value) _
-        / Cells(Item - 1, 14).Value)
-        'Now we can delete the row going bottom up so the rows don't shift and we don't have to calculate the offset
-        ThisWorkbook.ActiveSheet.Cells(Item, 14).EntireRow.Delete
+        'Uncomment for debugging purposes
+        'Debug.Print lastRow
+        'Debug.Print Round((Cells([lastRow], [3]).Value / min2hr))
         
-    Next Item
-    
-    Debug.Print rows2del.Count
+        For x = 1 To totaltime 'Number of times backflush is occuring
+            Debug.Print x
+            For k = (37 + (x - 1) * backflushFreq * 6) - del To ((6 * backflushFreq * x) - 1) - del
+                'Debug.Print k
+                'If (Abs(Cells(k, 11).Value - Cells(k - 1, 11).Value) / Cells(k - 1, 11).Value) = 1 Then
+                If k > ThisWorkbook.ActiveSheet.Range("K1").CurrentRegion.Rows.Count Then
+                    Exit For
+                ElseIf (Abs(Cells(k, 11).Value - Cells(k - 1, 11).Value) / Cells(k - 1, 11).Value) > 0.115 Then
+                    Debug.Print ("Deleted row " & k & " % Difference: " & Abs(Cells(k, 11).Value - Cells(k - 1, 11).Value) / Cells(k - 1, 11).Value)
+                    ThisWorkbook.ActiveSheet.Cells(k, 11).EntireRow.Delete
+                    del = del + 1
+                End If
+            Next k
+        Next x
+    End If
         
-    
 End Sub
 Sub createSheets()
 
@@ -242,7 +195,7 @@ Sub summaryTable()
     
     backflushDuration = InputBox("Please enter the backflush duration in seconds below: ")
     MsgBox ("Choose a membrane material by clicking on cell B3 and choosing an option from the dropdown menu.")
-    'normPressure = InputBox("Please enter the experiment's normal pressure in psi: ")
+   normPressure = InputBox("Please enter the experiment's normal pressure in psi: ")
     
     'Start filling in the data values with values from the original data
     [P2].Value = Left(Range("A2"), [10]) ' date of experiment
@@ -266,8 +219,8 @@ Sub summaryTable()
     Selection.AutoFill Destination:=Range(Cells(2, 17), Cells(lastRow, 17)), Type:=xlFillDefault
     'Round(Exp((-52.843) + (3703.6 / 295.15) + 5.866 * 5.68748370169 - (5.879 * 10 ^ (-29)) * 295.15 ^ 10), 7)
     'Debug.Print normViscosity
-    'Range("N2").Formula = "= K2 * Q2 / 0.000975735*" & normPressure & "/((E2+F2)/2)" 'Normalized Flux
-    'Range("N2").AutoFill Destination:=Range(Cells(2, 14), Cells(lastRow, 14)), Type:=xlFillDefault
+    Range("N2").Formula = "= K2 * Q2 / 0.000975735*" & normPressure & "/((E2+F2)/2)" 'Normalized Flux
+    Range("N2").AutoFill Destination:=Range(Cells(2, 14), Cells(lastRow, 14)), Type:=xlFillDefault
     [P12].Value = Application.Average(Range(Cells(2, 14), Cells(lastRow, 14))) 'Average normalized permeate flux
     [P13].Value = Application.StDev(Range(Cells(2, 14), Cells(lastRow, 14))) 'Standard Deviation for normalized permeate flux
     ' Make a new column for differential pressure loss. This column can be deleted later if you wish
@@ -322,9 +275,8 @@ Sub summaryTable()
     
     'delete raw data and move table
     Worksheets(2).Select
-    Rows(Cells(18, 16).Row & ":" & Rows.Count).Delete
     Range("A:N").Delete Shift:=xlToLeft
-    Range("C:Q").Delete Shift:=xlToLeft
+    Range("C:D").Delete Shift:=xlToLeft
 
     'un-comment this if the table didn't shift to A1 automatically upon deletion of columns A-N
     '(sort of like a failsafe to copy and paste the table)
@@ -440,7 +392,7 @@ Sub PermFluxAndAvgMemPressureVsTime()
                     SearchOrder:=xlByRows, _
                     SearchDirection:=xlPrevious, _
                     MatchCase:=False).Row
-    'Debug.Print lastRow
+    Debug.Print lastRow
 
     'Make another column with the average Membrane Pressure
 
@@ -571,6 +523,5 @@ Sub saveAs()
     ActiveWorkbook.saveAs Filename:="C:\Users\KCHONG\Documents\E2Metrix\Compiled Data\" & "Compiled data - " & Format(expDate, "mm/dd/yyyy") & ".xlsm", FileFormat:=52
     ActiveSheet.Name = "PF and Avg MP Vs. Time"
     ActiveWorkbook.Save
-    Debug.Print ("Saved as: Compiled data - " & Format(expDate, "mm/dd/yyyy") & ".xlsm")
-    
+
 End Sub
