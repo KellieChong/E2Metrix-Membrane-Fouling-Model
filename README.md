@@ -4,13 +4,13 @@
 
 <p>The purpose of this simulation is to mathematically determine the fouling mechanism on MF/UF membranes during operation with one hour electrocoagulated thickener overflow water. The model is based off empirical data acquired during 4 hour experiments, with backflush at every hour. The model is currently implemented with a 200 nm TiO2 membrane, at 20, 40, and 60 psi. Here, the model will take experimental flux values during each hour of operation and optimize values for the constants used in each mechanism's equation by minimizing their residual square sum function. The K values for 7 different fouling mechanisms, including 3 combined models are calculated in the model: </p>
 
-<p>1. Complete pore blocking </p> 
+1. Complete pore blocking<br>
 ![alt text](https://github.com/KellieChong/E2Metrix-Membrane-Fouling-Model/blob/main/Images%20for%20README/Complete-Block.png)
-<p>2. Intermediate pore blocking </p> 
+2. Intermediate pore blocking </p> 
 ![Alt text](https://github.com/KellieChong/E2Metrix-Membrane-Fouling-Model/blob/main/Images%20for%20README/Intermediate%20Block.png)
-<p>3. Pore constriction </p> 
+3. Pore constriction <br> 
 ![Alt text](https://github.com/KellieChong/E2Metrix-Membrane-Fouling-Model/blob/main/Images%20for%20README/Pore%20Constriction.png)
-<p>4. Cake filtration </p>
+4. Cake filtration <br>
 ![Alt text](https://github.com/KellieChong/E2Metrix-Membrane-Fouling-Model/blob/main/Images%20for%20README/Cake%20Filtration.png)
 <p>5. Combined cake filtration and complete pore blocking </p>
 <p>6. Combined intermediate blocking and cake filtration</p>
