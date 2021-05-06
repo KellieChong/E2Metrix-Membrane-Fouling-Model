@@ -12,10 +12,15 @@
 <p>6. Combined intermediate blocking and cake filtration</p>
 <p>7. Combined pore constriction and cake filtration </p>
 
-<b>
+<br>
 <p>A second functionality of this model is to predict other parameters such as the cake resistance, cake thickness, and cake particle size based off other intrinsic membrane and fluid dynamics properties of the system. Once the constant Kc of the most optimal fouling mechanism is calculated by the previous section, it can then be used for determining these other attributes of our foulant. </p>
 
-<b>
+<br>
+<h2> Examples of use </h2>
+  
+<p>The various functionalities of this model are described in the following video:.</p>
+
+<br> 
 <h2> Technologies </h2>
 
 <p>Jupyter notebook was used for the model and ease of access.</p>
