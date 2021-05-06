@@ -18,7 +18,9 @@
 <br>
 <h2> Examples of use </h2>
   
-<p>The various functionalities of this model are described in the following video:.</p>
+<p>The various functionalities of this model are described in the following video:</p>
+
+[![Link to demo video](https://github.com/KellieChong/E2Metrix-Membrane-Fouling-Model/blob/main/Youtube%20Video%20Cover.png)](https://youtu.be/4eb2-NmpqzwE)
 
 <br> 
 <h2> Technologies </h2>
